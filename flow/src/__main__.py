@@ -59,4 +59,8 @@ async def flow_loop():
 
 
 if __name__ == "__main__":
+    import debugpy
+    debugpy.listen(("0.0.0.0", 5678))
+    logger.info("=========Waiting for debugger===========")
+    debugpy.wait_for_client()
     asyncio.run(flow_loop())

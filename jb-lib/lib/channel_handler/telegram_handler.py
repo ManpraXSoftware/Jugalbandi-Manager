@@ -27,6 +27,8 @@ from ..data_models import (
     DialogMessage,
     DialogOption,
 )
+import logging
+logger = logging.getLogger(__name__)
 
 
 class TelegramHandler(RestChannelHandler):
@@ -184,7 +186,9 @@ class TelegramHandler(RestChannelHandler):
         data = {
             "chat_id": str(user.identifier),
             "text": str(message.body),
+            "parse_mode": "MarkdownV2", # To enable bold, italics, etc.
         }
+        logger.error(f"============Text=================: {data}")
         return data
 
     @classmethod
@@ -213,7 +217,7 @@ class TelegramHandler(RestChannelHandler):
                 "inline_keyboard": [
                     [
                         {
-                            "text": option.option_text[:20],
+                            "text": option.option_text,
                             "callback_data": option.option_id,
                         }
                     ]
@@ -352,6 +356,7 @@ class TelegramHandler(RestChannelHandler):
         data = cls.parse_bot_output(message=message, channel=channel, user=user)
         r = requests.post(url, data=json.dumps(data), headers=headers)
         json_output = r.json()
+        logger.error(f"=============================: {url}, {data}, {json_output}")
         if json_output and json_output["result"]:
             return json_output["result"]["message_id"]
         return None

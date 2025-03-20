@@ -104,11 +104,18 @@ services:
       - AZURE_STORAGE_ACCOUNT_KEY=${AZURE_STORAGE_ACCOUNT_KEY}
       - AZURE_STORAGE_CONTAINER=${AZURE_STORAGE_CONTAINER}
       - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - PYTHONUNBUFFERED=1
+      - PYDEVD_DISABLE_FILE_VALIDATION=1
+    # stdin_open: true  # Keep stdin open,
+    # tty: true  # Allocate a pseudo-TTY
+    ports:
+      - "5678:5678" # For debugging
     depends_on:
         - kafka
         - postgres
     volumes:
       - ./media:/mnt/jb_files
+      - /home/nikhil/workspace/jugalbandi/jugalbandi_docker_files/flow/app:/app
   indexer:
     environment:
       - POSTGRES_DATABASE_NAME=${POSTGRES_DATABASE_NAME}
@@ -190,6 +197,8 @@ services:
         - postgres
     volumes:
       - ./media:/mnt/jb_files
+    stdin_open: true  # Keep stdin open,
+    tty: true  # Allocate a pseudo-TTY
   frontend:
     ports:
       - "4173:4173"
@@ -201,7 +210,7 @@ services:
   postgres:
     image: ankane/pgvector
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
     #   POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
